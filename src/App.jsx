@@ -42,24 +42,16 @@ export default function App() {
     c.hazards.some(h => h.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
+  const isSearching = searchQuery.trim().length > 0;
+
   return (
     <div>
-      {/* HEADER */}
-      <header style={{
-        position: 'sticky', top: 0, zIndex: 20, background: 'white',
-        borderBottom: '1px solid var(--outline-variant)'
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '16px' }}>
-          <div className="container flex justify-between items-center" style={{ marginBottom: '16px' }}>
-            <h1 className="headline-lg text-primary" style={{ margin: 0 }}>Chemical Safety Database</h1>
-          </div>
-        </div>
-      </header>
-
-      {/* Search */}
-      <div className="search-container">
-        <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div className="search-input-wrapper search-input-medium" style={{ padding: 0 }}>
+      {/* Landing / Hero - centered when not searching */}
+      <div className={`hero-section ${isSearching ? 'hero-section--compact' : ''}`}>
+        <div className="hero-content">
+          <h1 className="hero-title">Chemical Safety Database</h1>
+          <p className="hero-subtitle">Cari informasi zat kimia, sifat bahaya, dan data MSDS</p>
+          <div className="search-input-wrapper search-input-medium">
             <SearchIcon />
             <input
               type="text"
@@ -70,23 +62,31 @@ export default function App() {
             />
           </div>
           <div className="search-total-info">
-            {searchQuery
+            {isSearching
               ? <span>Ditemukan <strong>{filtered.length}</strong> dari <strong>{compoundsData.length}</strong> zat kimia</span>
-              : <span>Menampilkan <strong>{compoundsData.length}</strong> zat kimia</span>
+              : <span><strong>{compoundsData.length}</strong> zat kimia tersedia</span>
             }
           </div>
         </div>
       </div>
 
-      {/* Main */}
-      <main className="container mt-md" style={{ paddingBottom: '40px' }}>
-        <div className="grid-layout">
-          {filtered.map(c => (
-            <CompoundCard key={c.id} data={c} onClick={() => setSelectedCompound(c)} />
-          ))}
-          {filtered.length === 0 && <p className="body-md text-on-surface-variant">Tidak ada zat kimia yang cocok.</p>}
-        </div>
-      </main>
+      {/* Results - only show when searching */}
+      {isSearching && (
+        <main className="container mt-md" style={{ paddingBottom: '40px' }}>
+          <div className="grid-layout">
+            {filtered.map(c => (
+              <CompoundCard key={c.id} data={c} onClick={() => setSelectedCompound(c)} />
+            ))}
+            {filtered.length === 0 && (
+              <div className="search-empty">
+                <div className="search-empty__icon">🔍</div>
+                <div className="search-empty__title">Tidak ditemukan</div>
+                <div className="search-empty__desc">Tidak ada zat kimia yang cocok dengan "{searchQuery}"</div>
+              </div>
+            )}
+          </div>
+        </main>
+      )}
 
       {/* Modal */}
       {selectedCompound && <CompoundModal data={selectedCompound} onClose={() => setSelectedCompound(null)} />}
