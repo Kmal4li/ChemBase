@@ -327,41 +327,6 @@ div[data-testid="stMainBlockContainer"] {
 </style>
 """
 
-AUTOSEARCH_JS = """
-<script>
-(function(){
-    var doc = window.parent.document;
-    var timer;
-    function bind(){
-        var els = doc.querySelectorAll('input[type="text"]');
-        els.forEach(function(el){
-            if(el.dataset._asBound) return;
-            el.dataset._asBound = '1';
-            el.addEventListener('input', function(){
-                clearTimeout(timer);
-                timer = setTimeout(function(){
-                    var start = el.selectionStart;
-                    var end = el.selectionEnd;
-                    el.dispatchEvent(new KeyboardEvent('keydown',{
-                        key:'Enter', code:'Enter',
-                        keyCode:13, which:13,
-                        bubbles:true, cancelable:true
-                    }));
-                    el.blur();
-                    el.focus();
-                    if (start !== null && end !== null) {
-                        el.setSelectionRange(start, end);
-                    }
-                }, 400);
-            });
-        });
-    }
-    bind();
-    new MutationObserver(bind).observe(doc.body, {childList:true, subtree:true});
-})();
-</script>
-"""
-
 
 @st.dialog("Detail Zat Kimia", width="large")
 def show_detail(compound_id):
@@ -586,7 +551,6 @@ def main():
                     ):
                         show_detail(compound["id"])
 
-    st.html(AUTOSEARCH_JS, unsafe_allow_javascript=True)
 
 
 if __name__ == "__main__":
