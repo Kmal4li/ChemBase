@@ -340,12 +340,19 @@ AUTOSEARCH_JS = """
             el.addEventListener('input', function(){
                 clearTimeout(timer);
                 timer = setTimeout(function(){
+                    var start = el.selectionStart;
+                    var end = el.selectionEnd;
                     el.dispatchEvent(new KeyboardEvent('keydown',{
                         key:'Enter', code:'Enter',
                         keyCode:13, which:13,
                         bubbles:true, cancelable:true
                     }));
-                }, 350);
+                    el.blur();
+                    el.focus();
+                    if (start !== null && end !== null) {
+                        el.setSelectionRange(start, end);
+                    }
+                }, 400);
             });
         });
     }
