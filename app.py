@@ -1,8 +1,3 @@
-"""
-ChemBase - Streamlit Version
-Chemical Safety Database
-"""
-
 import html as html_mod
 import streamlit as st
 import streamlit.components.v1 as components
@@ -15,10 +10,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-
-# ────────────────────────────────────────
-#  HELPERS
-# ────────────────────────────────────────
 
 def get_hazard_class(hz):
     low = hz.lower()
@@ -84,15 +75,10 @@ def filter_data(query):
     ]
 
 
-# ────────────────────────────────────────
-#  CSS SYSTEM
-# ────────────────────────────────────────
-
 ALL_CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-/* ---------- Hide Streamlit chrome ---------- */
 header, footer, .stDeployButton,
 div[data-testid="stDecoration"],
 div[data-testid="stStatusWidget"],
@@ -108,7 +94,6 @@ div[data-testid="stToolbar"] {
     font-family: 'Hanken Grotesk', sans-serif !important;
 }
 
-/* ---------- Global Transparency for Background Image ---------- */
 div[data-testid="stAppViewContainer"],
 div[data-testid="stAppViewBlockContainer"],
 div[data-testid="stMainBlockContainer"],
@@ -119,7 +104,6 @@ div[data-testid="stVerticalBlockBorderWrapper"],
     background: transparent !important;
 }
 
-/* ---------- Search Input ---------- */
 div[data-testid="stTextInput"] label {
     display: none !important;
 }
@@ -148,7 +132,6 @@ div[data-testid="stTextInput"] input::placeholder {
     font-size: 14px !important;
 }
 
-/* ---------- Chips (hazard labels) ---------- */
 .chips-wrapper { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
     padding: 4px 8px; border-radius: 4px;
@@ -166,7 +149,6 @@ div[data-testid="stTextInput"] input::placeholder {
 .chip-karsinogenik { background: #ffd6e0; color: #8c0032; }
 .chip-eksplosif    { background: #ffdcc8; color: #832200; }
 
-/* ---------- Card ---------- */
 .chem-card {
     border: 1px solid #e2e2e5; border-radius: 12px;
     background: white; overflow: hidden; cursor: pointer;
@@ -205,7 +187,6 @@ div[data-testid="stTextInput"] input::placeholder {
     font-size: 14px; color: #1a1c1e;
 }
 
-/* ---------- Detail button ---------- */
 button[data-testid="stBaseButton-tertiary"] {
     font-family: 'Hanken Grotesk', sans-serif !important;
     font-size: 13px !important;
@@ -224,7 +205,6 @@ button[data-testid="stBaseButton-tertiary"]:hover {
     color: white !important;
 }
 
-/* ---------- Modal / Dialog ---------- */
 .modal-formula {
     font-family: 'JetBrains Mono', monospace;
     font-size: 24px; font-weight: 700; color: #006591;
@@ -251,7 +231,6 @@ button[data-testid="stBaseButton-tertiary"]:hover {
     font-size: 14px; color: #1a1c1e;
 }
 
-/* ---------- MSDS ---------- */
 .msds-block { border-radius: 0 6px 6px 0; padding: 12px; }
 .msds-block-title {
     font-family: 'Hanken Grotesk', sans-serif;
@@ -275,14 +254,12 @@ button[data-testid="stBaseButton-tertiary"]:hover {
     background-color: #004c6e; color: white !important;
 }
 
-/* ---------- Rumus bangun ---------- */
 .rumus-bangun-wrapper {
     background: #f3f3f6; border-radius: 12px; padding: 20px;
     display: flex; justify-content: center; border: 1px solid #bdc8d2;
 }
 .rumus-bangun-wrapper img { max-height: 140px; object-fit: contain; }
 
-/* ---------- Empty state ---------- */
 .search-empty {
     display: flex; flex-direction: column; align-items: center;
     padding: 80px 20px; text-align: center;
@@ -301,7 +278,6 @@ button[data-testid="stBaseButton-tertiary"]:hover {
 
 LANDING_CSS = """
 <style>
-/* -- Background image on entire app viewport -- */
 div[data-testid="stAppViewContainer"] {
     background-image: linear-gradient(rgba(0, 30, 50, 0.55), rgba(0, 30, 50, 0.55)), url('/app/static/assets/background_search.jpeg') !important;
     background-size: cover !important;
@@ -310,7 +286,6 @@ div[data-testid="stAppViewContainer"] {
     background-attachment: fixed !important;
 }
 
-/* -- Remove margins and set limits -- */
 div[data-testid="stAppViewBlockContainer"],
 div[data-testid="stMainBlockContainer"] {
     padding-top: 0 !important;
@@ -323,7 +298,6 @@ div[data-testid="stMainBlockContainer"] {
 
 SEARCH_CSS = """
 <style>
-/* -- Light washed background image in search results mode -- */
 div[data-testid="stAppViewContainer"] {
     background-image: linear-gradient(rgba(249, 249, 252, 0.9), rgba(249, 249, 252, 0.9)), url('/app/static/assets/background_search.jpeg') !important;
     background-size: cover !important;
@@ -332,7 +306,6 @@ div[data-testid="stAppViewContainer"] {
     background-attachment: fixed !important;
 }
 
-/* -- Spacing for search view blocks -- */
 div[data-testid="stAppViewBlockContainer"],
 div[data-testid="stMainBlockContainer"] {
     padding-top: 0 !important;
@@ -372,10 +345,6 @@ AUTOSEARCH_JS = """
 """
 
 
-# ────────────────────────────────────────
-#  MODAL DIALOG
-# ────────────────────────────────────────
-
 @st.dialog("Detail Zat Kimia", width="large")
 def show_detail(compound_id):
     compound = next((c for c in compounds_data if c["id"] == compound_id), None)
@@ -383,7 +352,6 @@ def show_detail(compound_id):
         st.error("Data tidak ditemukan")
         return
 
-    # Header
     st.markdown(
         f'<div style="margin-bottom:16px">'
         f'<div class="modal-formula">{compound["formula"]}</div>'
@@ -392,7 +360,6 @@ def show_detail(compound_id):
         unsafe_allow_html=True,
     )
 
-    # Rumus Bangun
     rumus = compound.get("rumusBangun", "")
     if rumus:
         st.markdown(
@@ -404,7 +371,6 @@ def show_detail(compound_id):
             unsafe_allow_html=True,
         )
 
-    # Info grid
     st.markdown(
         f'<div style="margin-bottom:16px"><div class="stat-grid">'
         f'<div class="stat-cell">'
@@ -419,7 +385,6 @@ def show_detail(compound_id):
         unsafe_allow_html=True,
     )
 
-    # Sifat Bahaya
     chips = build_chips_html(compound["hazards"], "11px")
     st.markdown(
         f'<div style="margin-bottom:16px">'
@@ -428,7 +393,6 @@ def show_detail(compound_id):
         unsafe_allow_html=True,
     )
 
-    # MSDS
     st.markdown(
         '<div class="label-caps" style="color:#1a1c1e;margin-bottom:12px">'
         'Keselamatan &amp; Penanganan (MSDS)</div>',
@@ -487,29 +451,20 @@ def show_detail(compound_id):
         )
 
 
-# ────────────────────────────────────────
-#  MAIN
-# ────────────────────────────────────────
-
 def main():
-    # 1) Baca query dari session state SEBELUM widget dirender
     current_query = st.session_state.get("q", "").strip()
     is_searching = bool(current_query)
 
-    # 2) Inject CSS (selalu)
     st.markdown(ALL_CSS, unsafe_allow_html=True)
 
     if not is_searching:
-        # ---------- MODE: LANDING ----------
         st.markdown(LANDING_CSS, unsafe_allow_html=True)
 
-        # Spacer atas (untuk centering vertikal visual)
         st.markdown(
             '<div style="height:calc(50vh - 180px)"></div>',
             unsafe_allow_html=True,
         )
 
-        # Judul
         st.markdown(
             '<h1 style="'
             "font-family:'Hanken Grotesk',sans-serif;"
@@ -520,7 +475,6 @@ def main():
             unsafe_allow_html=True,
         )
 
-        # Subjudul
         st.markdown(
             '<p style="'
             "font-family:'Hanken Grotesk',sans-serif;"
@@ -531,7 +485,6 @@ def main():
             unsafe_allow_html=True,
         )
 
-        # Search bar — centered via columns
         left_col, center_col, right_col = st.columns([1.2, 2, 1.2])
         with center_col:
             st.text_input(
@@ -541,7 +494,6 @@ def main():
                 label_visibility="collapsed",
             )
 
-        # Jumlah total
         st.markdown(
             '<p style="'
             "font-family:'Hanken Grotesk',sans-serif;"
@@ -554,12 +506,10 @@ def main():
         )
 
     else:
-        # ---------- MODE: SEARCH RESULTS ----------
         st.markdown(SEARCH_CSS, unsafe_allow_html=True)
 
         filtered = filter_data(current_query)
 
-        # Compact header title
         st.markdown(
             '<h1 style="'
             "font-family:'Hanken Grotesk',sans-serif;"
@@ -569,7 +519,6 @@ def main():
             unsafe_allow_html=True,
         )
 
-        # Search bar — centered
         left_col, center_col, right_col = st.columns([1.2, 2, 1.2])
         with center_col:
             st.text_input(
@@ -579,7 +528,6 @@ def main():
                 label_visibility="collapsed",
             )
 
-        # Compact results count info
         st.markdown(
             '<p style="'
             "font-family:'Hanken Grotesk',sans-serif;"
@@ -592,7 +540,6 @@ def main():
             unsafe_allow_html=True,
         )
 
-        # Hasil
         if not filtered:
             safe_query = html_mod.escape(current_query)
             st.markdown(
@@ -617,8 +564,8 @@ def main():
                     ):
                         show_detail(compound["id"])
 
-    # Auto-search JS (injected via st.html, natively executed)
     st.html(AUTOSEARCH_JS, unsafe_allow_javascript=True)
+
 
 if __name__ == "__main__":
     main()
