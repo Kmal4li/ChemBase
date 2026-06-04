@@ -1,7 +1,18 @@
 import html as html_mod
 import streamlit as st
 import streamlit.components.v1 as components
+import base64
+import os
 from data import compounds_data
+
+def get_base64_image(path):
+    if os.path.exists(path):
+        with open(path, "rb") as f:
+            data = f.read()
+        return base64.b64encode(data).decode("utf-8")
+    return ""
+
+bg_base64 = get_base64_image("static/assets/background_search.jpeg")
 
 st.set_page_config(
     page_title="Chemical Safety Database",
@@ -279,7 +290,7 @@ button[data-testid="stBaseButton-tertiary"]:hover {
 LANDING_CSS = """
 <style>
 div[data-testid="stAppViewContainer"] {
-    background-image: linear-gradient(rgba(0, 30, 50, 0.55), rgba(0, 30, 50, 0.55)), url('/app/static/assets/background_search.jpeg') !important;
+    background-image: linear-gradient(rgba(0, 30, 50, 0.55), rgba(0, 30, 50, 0.55)), url('data:image/jpeg;base64,BG_IMAGE_BASE64') !important;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -299,7 +310,7 @@ div[data-testid="stMainBlockContainer"] {
 SEARCH_CSS = """
 <style>
 div[data-testid="stAppViewContainer"] {
-    background-image: linear-gradient(rgba(249, 249, 252, 0.9), rgba(249, 249, 252, 0.9)), url('/app/static/assets/background_search.jpeg') !important;
+    background-image: linear-gradient(rgba(249, 249, 252, 0.9), rgba(249, 249, 252, 0.9)), url('data:image/jpeg;base64,BG_IMAGE_BASE64') !important;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -362,11 +373,15 @@ def show_detail(compound_id):
 
     rumus = compound.get("rumusBangun", "")
     if rumus:
+        img_path = os.path.join("static", rumus)
+        img_base64 = get_base64_image(img_path)
+        ext = rumus.split(".")[-1].lower()
+        mime = "image/png" if ext == "png" else "image/jpeg"
         st.markdown(
             f'<div style="margin-bottom:16px">'
             f'<div class="label-caps" style="color:#1a1c1e;margin-bottom:8px">Rumus Bangun</div>'
             f'<div class="rumus-bangun-wrapper">'
-            f'<img src="/app/static/{rumus}" alt="Struktur {compound["name"]}" />'
+            f'<img src="data:{mime};base64,{img_base64}" alt="Struktur {compound["name"]}" />'
             f'</div></div>',
             unsafe_allow_html=True,
         )
@@ -458,7 +473,7 @@ def main():
     st.markdown(ALL_CSS, unsafe_allow_html=True)
 
     if not is_searching:
-        st.markdown(LANDING_CSS, unsafe_allow_html=True)
+        st.markdown(LANDING_CSS.replace("BG_IMAGE_BASE64", bg_base64), unsafe_allow_html=True)
 
         st.markdown(
             '<div style="height:calc(50vh - 180px)"></div>',
@@ -506,7 +521,7 @@ def main():
         )
 
     else:
-        st.markdown(SEARCH_CSS, unsafe_allow_html=True)
+        st.markdown(SEARCH_CSS.replace("BG_IMAGE_BASE64", bg_base64), unsafe_allow_html=True)
 
         filtered = filter_data(current_query)
 
